@@ -2,11 +2,15 @@
 
 import sys
 import logging
+import time
 
 import numpy as np
 
 from util.activation_functions import Activation
 from model.classifier import Classifier
+from report.evaluator import Evaluator
+from sklearn.metrics import accuracy_score
+
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
                     level=logging.DEBUG,
@@ -58,7 +62,52 @@ class Perceptron(Classifier):
 
         # Here you have to implement the Perceptron Learning Algorithm
         # to change the weights of the Perceptron
-        pass
+        trainingSet = self.trainingSet
+        for inputInstance in range(trainingSet.input.shape[1]):
+            
+            
+            # Predefined epoches
+            for epoch in xrange(self.epochs):
+                error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
+                self.weight += self.learningRate*error*trainingSet.input[inputInstance,:]
+                #print "Weights adjusted"
+            """
+            # Error measure or Overfitting detector as epoch termination criteria
+            error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
+            snapShot = self.weight + self.learningRate*error*trainingSet.input[inputInstance,:]    
+            while not np.array_equal(snapShot, self.weight):
+                
+                error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
+                overfitting = accuracy_score(trainingSet.label, self.evaluate(trainingSet.input)) > accuracy_score(self.validationSet.label, self.evaluate(self.validationSet.input))
+                
+                #accTrain = accuracy_score(trainingSet.label, self.evaluate(trainingSet.input))
+                #accValid = accuracy_score(self.validationSet.label, self.evaluate(self.validationSet.input))
+                
+                #print accTrain
+
+                #print accValid
+
+                if accValid > accTrain:
+                    self.weight += self.learningRate*error*trainingSet.input[inputInstance,:]
+                    print "Weights adjusted"
+            
+            # Error measure as epoch termination criteria 
+            while True:
+                error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
+                overfitting = accuracy_score(trainingSet.label, self.evaluate(trainingSet.input)) > accuracy_score(self.validationSet.label, self.evaluate(self.validationSet.input))
+                if (error == 0):
+                    break
+                self.weight += self.learningRate*error*trainingSet.input[inputInstance,:]
+                print "Weights adjusted"
+            """       
+            if verbose:
+                evaluator = Evaluator()
+                print "<validationSet>",
+                evaluator.printAccuracy(self.validationSet, self.evaluate(self.validationSet.input))
+                #time.sleep(0.04)
+
+
+
 
     def classify(self, testInstance):
         """Classify a single instance.
@@ -75,7 +124,7 @@ class Perceptron(Classifier):
         # Here you have to implement the classification for one instance,
         # i.e., return True if the testInstance is recognized as a 7,
         # False otherwise
-        pass
+        return self.fire(testInstance)
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.

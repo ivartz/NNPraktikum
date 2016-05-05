@@ -34,6 +34,7 @@ class DataSet(object):
         # Transform all labels which is not the targetDigit to False,
         # The label of targetDigit will be True,
         if oneHot:
+            # map(function, iterable) returns a list of results of the function applied to every item of iterable
             self.label = list(map(lambda a: 1 if str(a) == targetDigit else 0,
                                   self.label))
 

@@ -3,8 +3,8 @@
 from random import random
 from model.classifier import Classifier
 
-__author__ = "ABC XYZ"  # Adjust this when you copy the file
-__email__ = "ABC.XYZ@student.kit.edu"  # Adjust this when you copy the file
+__author__ = "ugeuh"  # Adjust this when you copy the file
+__email__ = "ugeuh@student.kit.edu"  # Adjust this when you copy the file
 
 
 class StupidRecognizer(Classifier):
