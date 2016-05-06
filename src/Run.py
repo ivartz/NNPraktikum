@@ -31,7 +31,7 @@ def main():
     print("Done..")
 
     print("\nPerceptron has started training..")
-    myPerceptronClassifier.train(False)
+    myPerceptronClassifier.train(True)
     print("Done..")
 
     # Do the recognizer
