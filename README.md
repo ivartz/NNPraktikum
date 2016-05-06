@@ -6,12 +6,12 @@ ugeuh@student.kit.edu
 Matr.Nr.: 1914665
 
 
-## KIT Neural Network Praktikum coding framework
+# KIT Neural Network Praktikum coding framework
 
 See [ilias.studium.kit.edu](https://ilias.studium.kit.edu/goto_produktiv_crs_413999.html)
 for more information.
 
-# Requirements
+## Requirements
 
 Python version
 We use Python 2.7, not Python 3.x
