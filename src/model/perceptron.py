@@ -71,43 +71,10 @@ class Perceptron(Classifier):
                 error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
                 self.weight += self.learningRate*error*trainingSet.input[inputInstance,:]
                 #print "Weights adjusted"
-            """
-            # Error measure or Overfitting detector as epoch termination criteria
-            error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
-            snapShot = self.weight + self.learningRate*error*trainingSet.input[inputInstance,:]    
-            while not np.array_equal(snapShot, self.weight):
-                
-                error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
-                overfitting = accuracy_score(trainingSet.label, self.evaluate(trainingSet.input)) > accuracy_score(self.validationSet.label, self.evaluate(self.validationSet.input))
-                
-                #accTrain = accuracy_score(trainingSet.label, self.evaluate(trainingSet.input))
-                #accValid = accuracy_score(self.validationSet.label, self.evaluate(self.validationSet.input))
-                
-                #print accTrain
-
-                #print accValid
-
-                if accValid > accTrain:
-                    self.weight += self.learningRate*error*trainingSet.input[inputInstance,:]
-                    print "Weights adjusted"
-            
-            # Error measure as epoch termination criteria 
-            while True:
-                error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
-                overfitting = accuracy_score(trainingSet.label, self.evaluate(trainingSet.input)) > accuracy_score(self.validationSet.label, self.evaluate(self.validationSet.input))
-                if (error == 0):
-                    break
-                self.weight += self.learningRate*error*trainingSet.input[inputInstance,:]
-                print "Weights adjusted"
-            """       
             if verbose:
                 evaluator = Evaluator()
                 print "<validationSet>",
                 evaluator.printAccuracy(self.validationSet, self.evaluate(self.validationSet.input))
-                #time.sleep(0.04)
-
-
-
 
     def classify(self, testInstance):
         """Classify a single instance.

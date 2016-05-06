@@ -35,5 +35,20 @@ class StupidRecognizer(Classifier):
         # byChance is the probability of being correctly recognized
         return random() < self.byChance
 
-    def evaluate(self):
-        return list(map(self.classify, self.testSet.input))
+    def evaluate(self, test=None):
+        """Evaluate a whole dataset.
+
+        Parameters
+        ----------
+        test : the dataset to be classified
+        if no test data, the test set associated to the classifier will be used
+
+        Returns
+        -------
+        List:
+            List of classified decisions for the dataset's entries.
+        """
+        if test is None:
+            test = self.testSet.input
+        
+        return list(map(self.classify, test))

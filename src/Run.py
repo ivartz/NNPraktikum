@@ -12,9 +12,9 @@ from report.evaluator import Evaluator
 
 def main():
     data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000)
-    #myStupidClassifier = StupidRecognizer(data.trainingSet,
-#                                          data.validationSet,
-#                                          data.testSet)
+    myStupidClassifier = StupidRecognizer(data.trainingSet,
+                                          data.validationSet,
+                                          data.testSet)
     # Uncomment this to make your Perceptron evaluated
     myPerceptronClassifier = Perceptron(data.trainingSet,
                                          data.validationSet,
@@ -26,17 +26,19 @@ def main():
     print("=========================")
     print("Training..")
 
-    #print("\nStupid Classifier has started training..")
-    #myStupidClassifier.train()
-    #print("Done..")
+    print("\nStupid Classifier has started training..")
+    myStupidClassifier.train()
+    print("Done..")
 
     print("\nPerceptron has started training..")
-    myPerceptronClassifier.train(True)
+    myPerceptronClassifier.train(False)
     print("Done..")
 
     # Do the recognizer
     # Explicitly specify the test set to be evaluated
-    #stupidPred = myStupidClassifier.evaluate()
+    stupidPredOnTrainingSet = myStupidClassifier.evaluate(data.trainingSet.input)
+    stupidPredOnValidationSet = myStupidClassifier.evaluate(data.validationSet.input)
+    stupidPredOnTestSet = myStupidClassifier.evaluate()
     # Uncomment this to make your Perceptron evaluated
     perceptronPredOnTrainingSet = myPerceptronClassifier.evaluate(data.trainingSet.input)
     perceptronPredOnValidationSet = myPerceptronClassifier.evaluate(data.validationSet.input)
@@ -45,23 +47,25 @@ def main():
     # Report the result
     print("=========================")
     evaluator = Evaluator()
-
-    #print("Result of the stupid recognizer:")
-    #evaluator.printComparison(data.testSet, stupidPred)
-    #evaluator.printAccuracy(data.testSet, stupidPred)
-
+    print("Result of the stupid recognizer:")
+    print "<trainingSet>",
+    evaluator.printAccuracy(data.trainingSet, stupidPredOnTrainingSet)
+    print "<validationSet>",
+    evaluator.printAccuracy(data.validationSet, stupidPredOnValidationSet)
+    print "<testSet>",
+    evaluator.printAccuracy(data.testSet, stupidPredOnTestSet)
+    #evaluator.printComparison(data.testSet, stupidPredOnTestSet)
     print("\nResult of the Perceptron recognizer:")
-    #evaluator.printComparison(data.testSet, perceptronPred)
     # Uncomment this to make your Perceptron evaluated
-    
     print "<trainingSet>",
     evaluator.printAccuracy(data.trainingSet, perceptronPredOnTrainingSet)
-
+    #evaluator.printComparison(data.trainingSet, perceptronPredOnTrainingSet)
     print "<validationSet>",
     evaluator.printAccuracy(data.validationSet, perceptronPredOnValidationSet)
-
+    #evaluator.printComparison(data.validationSet, perceptronPredOnValidationSet)
     print "<testSet>",
     evaluator.printAccuracy(data.testSet, perceptronPredOnTestSet)
+    #evaluator.printComparison(data.testSet, perceptronPredOnTestSet)
 
     # eval.printConfusionMatrix(data.testSet, pred)
     # eval.printClassificationResult(data.testSet, pred, target_names)
