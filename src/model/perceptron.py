@@ -62,19 +62,50 @@ class Perceptron(Classifier):
 
         # Here you have to implement the Perceptron Learning Algorithm
         # to change the weights of the Perceptron
-        trainingSet = self.trainingSet
-        for inputInstance in range(trainingSet.input.shape[1]):
-            
-            
-            # Predefined epoches
-            for epoch in xrange(self.epochs):
-                error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
-                self.weight += self.learningRate*error*trainingSet.input[inputInstance,:]
-                #print "Weights adjusted"
+        #trainingSet = self.trainingSet
+        #for inputInstance in range(trainingSet.input.shape[1]):
+        #    
+        #    # Predefined epoches
+        #    for epoch in xrange(self.epochs):
+        #        error = trainingSet.label[inputInstance] - self.fire(trainingSet.input[inputInstance,:])
+        #        self.weight += self.learningRate*error*trainingSet.input[inputInstance,:]
+        #        #print "Weights adjusted"
+        #    if verbose:
+        #        evaluator = Evaluator()
+        #        print "<validationSet>",
+        #        evaluator.printAccuracy(self.validationSet, self.evaluate(self.validationSet.input))
+
+        # Correct soltion
+
+        for epoch in range(self.epochs):
             if verbose:
-                evaluator = Evaluator()
-                print "<validationSet>",
-                evaluator.printAccuracy(self.validationSet, self.evaluate(self.validationSet.input))
+                print("Training epoch {0}/{1}.."
+                      .format(epoch + 1, self.epochs))
+
+            self._train_one_epoch()
+
+            if verbose:
+                accuracy = accuracy_score(self.validationSet.label,
+                                          self.evaluate(self.validationSet))
+                print("Accuracy on validation: {0:.2f}%"
+                      .format(accuracy*100))
+                print("-----------------------------")
+
+    def _train_one_epoch(self):
+        """
+        Train one epoch, seeing all input instances
+        """
+
+        for img, label in zip(self.trainingSet.input, self.trainingSet.label):
+            output = self.fire(img)  # real output of the neuron
+            error = int(label) - int(output)
+
+            # online learning: updating weights after seeing 1 instance
+            self.weight += self.learningRate * error * img
+
+        # if we want to do batch learning, accumulate the error
+        # and update the weight outside the loop
+
 
     def classify(self, testInstance):
         """Classify a single instance.

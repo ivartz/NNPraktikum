@@ -38,10 +38,13 @@ def main():
     # Explicitly specify the test set to be evaluated
     stupidPredOnTrainingSet = myStupidClassifier.evaluate(data.trainingSet.input)
     stupidPredOnValidationSet = myStupidClassifier.evaluate(data.validationSet.input)
+    
     stupidPredOnTestSet = myStupidClassifier.evaluate()
+    
     # Uncomment this to make your Perceptron evaluated
     perceptronPredOnTrainingSet = myPerceptronClassifier.evaluate(data.trainingSet.input)
     perceptronPredOnValidationSet = myPerceptronClassifier.evaluate(data.validationSet.input)
+    
     perceptronPredOnTestSet = myPerceptronClassifier.evaluate()
     
     # Report the result
@@ -54,6 +57,7 @@ def main():
     evaluator.printAccuracy(data.validationSet, stupidPredOnValidationSet)
     print "<testSet>",
     evaluator.printAccuracy(data.testSet, stupidPredOnTestSet)
+    
     #evaluator.printComparison(data.testSet, stupidPredOnTestSet)
     print("\nResult of the Perceptron recognizer:")
     # Uncomment this to make your Perceptron evaluated
