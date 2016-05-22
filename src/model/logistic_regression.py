@@ -71,7 +71,7 @@ class LogisticRegression(Classifier):
         """
 
         # Here you have to implement classification method given an instance
-        pass
+        
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
