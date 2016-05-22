@@ -1,4 +1,4 @@
-### NNPraktikum Übung 1
+### NNPraktikum Übung 2
 Logistic regression to classify a handwritten digit whether it is a seven (7) or not using the picture samples from the MNIST dataset.
 
 ugeuh@student.kit.edu
