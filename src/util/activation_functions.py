@@ -25,8 +25,8 @@ class Activation:
     @staticmethod
     def sigmoid_prime(outp):
         # Here you have to code the derivative of sigmoid function
-        netOutput = self.sigmoid(outp)
-        return netOutput.*(1-netOutput)
+        netOutput = Activation.sigmoid(outp)
+        return netOutput*(1-netOutput)
 
     @staticmethod
     def tanh(outp):
