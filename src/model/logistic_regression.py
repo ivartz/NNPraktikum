@@ -45,7 +45,42 @@ class LogisticRegression(Classifier):
         self.validationSet = valid
         self.testSet = test
 
-        self.layer = LogisticLayer(784, 1, None, 'sigmoid', True)
+        self.layer = LogisticLayer(785, 1, None, 'sigmoid', True)
+
+    def logisticBatchDeltaRule(self, inData, labelData):
+        temp = np.ndarray(self.layer.shape)
+        for img, label in zip(inData, labelData):
+
+            outp = self.layer._fire(img)
+            
+            error = label - outp
+            
+            sigm_pr = Activation.sigmoid_prime(outp)
+
+            
+            
+            
+
+
+
+            #print temp.shape
+            
+            #print error.shape
+            #print sigm_pr.shape
+            #print img.shape
+
+            #print temp.shape
+            #print (error * sigm_pr * img).shape
+            
+            temp[:,0] += error * sigm_pr * img
+
+
+            #sys.exit()
+
+
+
+        return temp
+
 
     def train(self, verbose=True):
         """Train the Logistic Regression.
@@ -58,15 +93,14 @@ class LogisticRegression(Classifier):
 
         # Here you have to implement training method "epochs" times
         # Please using LogisticLayer class
-
-        # Create layer taking 784+1 input values and producing 1 output value
         
         for epoch in range(self.epochs):
             if verbose:
                 print("Training epoch {0}/{1}.."
                       .format(epoch + 1, self.epochs))
 
-            self._train_one_epoch(self.layer)
+            deltaw = self.learningRate * self.logisticBatchDeltaRule(self.trainingSet.input, self.trainingSet.label)
+            self.layer.updateWeights(deltaw)
 
             if verbose:
                 accuracy = accuracy_score(self.validationSet.label,
@@ -75,31 +109,7 @@ class LogisticRegression(Classifier):
                       .format(accuracy*100))
                 print("-----------------------------")
 
-    def _train_one_epoch(self, layer):
-        """
-        Train one epoch, seeing all input instances
-        """
-        for img, label in zip(self.trainingSet.input, self.trainingSet.label):
-            
-            #output = self._fire(img)  # real output of the neuron
-            #error = int(label) - int(output)
-
-            # online learning: updating weights after seeing 1 instance
-            #self.weight += self.learningRate * error * img
-
-            #layer.inp = img#[1:] = img
-
-
-            layer.deltas -= self.learningRate* layer.computeDerivative(img, label)
-
-            
-            
-
-            layer.updateWeights()
-
-        # if we want to do batch learning, accumulate the error
-        # and update the weight outside the loop
-
+    
 
     def classify(self, testInstance):
         """Classify a single instance.

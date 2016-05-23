@@ -50,9 +50,7 @@ class LogisticLayer():
         self.inp[0] = 1
         self.outp = np.ndarray((n_out, 1))
         
-        #self.deltas = np.zeros((n_out, 1))
-        self.deltas = np.zeros((n_in, n_out)) # should be the same shape as the weights after my use
-
+        self.deltas = np.zeros((n_out, 1))
 
         # Weight initialization
         if weights is None:
@@ -85,7 +83,7 @@ class LogisticLayer():
         #self.outp = np.dot(inp, weights)
         return np.dot(inp, weights)
 
-    def computeDerivative(self, nextDerivatives, nextWeights): # I suppose these two parameters are for calculation for not the logistic layer
+    def computeDerivatives(self, nextDerivatives, nextWeights): # This function is unclear to me. I would be happy to know if this should be used for the assignment 2 solution
         """
         Compute the derivatives (backward)
 
@@ -105,33 +103,20 @@ class LogisticLayer():
         # Here the implementation of partial derivative calculation
         if self.is_classifier_layer:
             # Simplified derivative computation
-            
-            inp = nextWeights
-
-            label = nextDerivatives
-
-            output = self._fire(inp)
-            
-            error = label - output
-            
-            sigm_pr = Activation.sigmoid_prime(inp)
-
-            return error * sigm_pr * inp
-
+            # Decided to make own funciton instead
+            pass
         else:
             pass
 
 
 
-    def updateWeights(self):
+    def updateWeights(self, deltaw):
         """
         Update the weights of the layer
         """
 
         # Here the implementation of weight updating mechanism
-        self.weights -= learningRate*self.deltas
-
-        # Clear deltas
+        self.weights += deltaw
         
 
     def _fire(self, inp):
