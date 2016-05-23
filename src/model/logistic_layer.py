@@ -49,11 +49,14 @@ class LogisticLayer():
         self.inp = np.ndarray((n_in+1, 1))
         self.inp[0] = 1
         self.outp = np.ndarray((n_out, 1))
-        self.deltas = np.zeros((n_out, 1))
+        
+        #self.deltas = np.zeros((n_out, 1))
+        self.deltas = np.zeros((n_in, n_out)) # should be the same shape as the weights after my use
+
 
         # Weight initialization
         if weights is None:
-            self.weights = np.random.rand(n_in+1, n_out)/10
+            self.weights = np.random.rand(n_in, n_out)/10
         else:
             self.weights = weights
 
@@ -103,15 +106,17 @@ class LogisticLayer():
         if self.is_classifier_layer:
             # Simplified derivative computation
             
-            label = nextDerivatives
-            
-            output = self._fire(self.inp)
-            
-            error = label - output 
-            
-            sigm_pr = Activation.sigmoid_prime(self.inp)
+            inp = nextWeights
 
-            return error * sigm_pr * self.inp
+            label = nextDerivatives
+
+            output = self._fire(inp)
+            
+            error = label - output
+            
+            sigm_pr = Activation.sigmoid_prime(inp)
+
+            return error * sigm_pr * inp
 
         else:
             pass
@@ -124,7 +129,10 @@ class LogisticLayer():
         """
 
         # Here the implementation of weight updating mechanism
-        self.weights += self.deltas
+        self.weights -= learningRate*self.deltas
+
+        # Clear deltas
+        
 
     def _fire(self, inp):
         return Activation.sigmoid(np.dot(np.array(inp), self.weights))

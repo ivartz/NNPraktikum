@@ -87,10 +87,13 @@ class LogisticRegression(Classifier):
             # online learning: updating weights after seeing 1 instance
             #self.weight += self.learningRate * error * img
 
-            layer.inp = img#[1:] = img
+            #layer.inp = img#[1:] = img
 
 
-            layer.deltas -= self.learningRate*layer.computeDerivative([], label)
+            layer.deltas -= self.learningRate* layer.computeDerivative(img, label)
+
+            
+            
 
             layer.updateWeights()
 
