@@ -105,7 +105,7 @@ class LogisticRegression(Classifier):
             # Compute the derivatives w.r.t to the error
             # Please note the treatment of nextDerivatives and nextWeights
             # in case of an output layer
-            self.layer.computeDerivative(np.array(label - self.layer.outp),
+            self.layer.computeErrorTerms(np.array(label - self.layer.outp),
                                          np.array(1.0))
 
             # Update weights in the online learning fashion

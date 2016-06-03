@@ -61,10 +61,19 @@ class MultilayerPerceptron(Classifier):
         self.test_set.input = np.insert(self.test_set.input, 0, 1, axis=1)
 
         # Build up the network from specific layers
-        # Here is an example of a MLP acting like the Logistic Regression
         self.layers = []
-        output_activation = "sigmoid"
-        self.layers.append(LogisticLayer(10, 1, None, output_activation, True))
+
+        # Input layer
+        input_activation = "sigmoid"
+        self.layers.append(LogisticLayer(train.input.shape[1], 200, None, input_activation, False)) 
+
+        # Hidden layer
+        hidden_activation = "sigmoid"
+        self.layers.append(LogisticLayer(200, 100, None, hidden_activation, False)) 
+
+        # Output layer
+        output_activation = "softmax"
+        self.layers.append(LogisticLayer(100, train.output.shape[1], None, output_activation, True)) 
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -87,8 +96,14 @@ class MultilayerPerceptron(Classifier):
         # Here you have to propagate forward through the layers
         # And remember the activation values of each layer
         """
-
-        pass
+        # list to record activations, appending numpy array results to it
+        activationValuesInLayers = []
+        for layer_index in range(self.layers):
+            if layer_index != 0:
+                inp = activationValuesInLayers[layer_index-1]
+            activationValues = self._get_layer(layer_index).forward(inp)
+            activationValuesInLayers.append(activationValues)
+        return activationValuesInLayers[-1]
 
     def _compute_error(self, target):
         """
@@ -99,7 +114,7 @@ class MultilayerPerceptron(Classifier):
         ndarray :
             a numpy array (1,nOut) containing the output of the layer
         """
-        pass
+        
 
     def _update_weights(self):
         """

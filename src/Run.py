@@ -3,8 +3,8 @@
 
 from data.mnist_seven import MNISTSeven
 
-from model.stupid_recognizer import StupidRecognizer
-from model.perceptron import Perceptron
+#from model.stupid_recognizer import StupidRecognizer
+#from model.perceptron import Perceptron
 from model.logistic_regression import LogisticRegression
 from model.mlp import MultilayerPerceptron
 
