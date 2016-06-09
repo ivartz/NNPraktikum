@@ -1,7 +1,7 @@
 
 import numpy as np
 
-# from util.activation_functions import Activation
+from util.loss_functions import CrossEntropyError
 from model.logistic_layer import LogisticLayer
 from model.classifier import Classifier
 
@@ -65,11 +65,11 @@ class MultilayerPerceptron(Classifier):
 
         # Input layer
         input_activation = "sigmoid"
-        self.layers.append(LogisticLayer(train.input.shape[1], 200, None, input_activation, False)) 
+        self.layers.append(LogisticLayer(train.input.shape[1], 100, None, input_activation, False)) 
 
         # Hidden layer
-        hidden_activation = "sigmoid"
-        self.layers.append(LogisticLayer(200, 100, None, hidden_activation, False)) 
+        #hidden_activation = "sigmoid"
+        #self.layers.append(LogisticLayer(200, 100, None, hidden_activation, False)) 
 
         # Output layer
         output_activation = "softmax"
@@ -98,12 +98,18 @@ class MultilayerPerceptron(Classifier):
         """
         # list to record activations, appending numpy array results to it
         activationValuesInLayers = []
-        for layer_index in range(self.layers):
+        #for layer_index in range(self.layers):
+        #    if layer_index != 0:
+        #        inp = activationValuesInLayers[layer_index-1]
+        #    activationValues = self._get_layer(layer_index).forward(inp)
+        #    activationValuesInLayers.append(activationValues)
+        #return activationValuesInLayers[-1]
+
+        for layer_index, layer in enumerate(self.layers):
             if layer_index != 0:
                 inp = activationValuesInLayers[layer_index-1]
-            activationValues = self._get_layer(layer_index).forward(inp)
+            activationValues = layer.forward(inp)
             activationValuesInLayers.append(activationValues)
-        return activationValuesInLayers[-1]
 
     def _compute_error(self, target):
         """
@@ -114,13 +120,13 @@ class MultilayerPerceptron(Classifier):
         ndarray :
             a numpy array (1,nOut) containing the output of the layer
         """
-        
+        return BinaryCrossEntropyError.calculate_error(target - self._get_output_layer().outp)
 
     def _update_weights(self):
         """
         Update the weights of the layers by propagating back the error
         """
-        pass
+        #outputError = 
 
     def train(self, verbose=True):
         """Train the Multi-layer Perceptrons
