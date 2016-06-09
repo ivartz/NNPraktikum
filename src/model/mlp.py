@@ -5,6 +5,7 @@ from util.loss_functions import CrossEntropyError
 from model.logistic_layer import LogisticLayer
 from model.classifier import Classifier
 
+from sklearn.metrics import accuracy_score
 
 class MultilayerPerceptron(Classifier):
     """
@@ -73,7 +74,7 @@ class MultilayerPerceptron(Classifier):
 
         # Output layer
         output_activation = "softmax"
-        self.layers.append(LogisticLayer(100, train.output.shape[1], None, output_activation, True)) 
+        self.layers.append(LogisticLayer(100, train.output.shape[1], None, output_activation, True))
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -120,13 +121,19 @@ class MultilayerPerceptron(Classifier):
         ndarray :
             a numpy array (1,nOut) containing the output of the layer
         """
-        return BinaryCrossEntropyError.calculate_error(target - self._get_output_layer().outp)
+
+        #self.outputLayerError = BinaryCrossEntropyError.calculate_error(target - self._get_output_layer().outp)
+        #return self.outputLayerErrornext_weights
+
+        # computing error terms for the latest layer
+        self._get_output_layer().computeErrorTerms( target - self._get_output_layer().outp, np.array(1.0) )
 
     def _update_weights(self):
         """
         Update the weights of the layers by propagating back the error
         """
-        #outputError = 
+        for layer in self.layers:
+            layer.updateWeights(self.learning_rate)
 
     def train(self, verbose=True):
         """Train the Multi-layer Perceptrons
@@ -137,7 +144,38 @@ class MultilayerPerceptron(Classifier):
             Print logging messages with validation accuracy if verbose is True.
         """
 
-        pass
+
+
+
+        """Train the Logistic Regression.
+
+        Parameters
+        ----------
+        verbose : boolean
+            Print logging messages with validation accuracy if verbose is True.
+        """
+
+        # Run the training "epochs" times, print out the logs
+        for epoch in range(self.epochs):
+            if verbose:
+                print("Training epoch {0}/{1}.."
+                      .format(epoch + 1, self.epochs))
+
+            self._train_one_epoch()
+
+            if verbose:
+                accuracy = accuracy_score(self.validation_set.label,
+                                          self.evaluate(self.validation_set))
+                # Record the performance of each epoch for later usages
+                # e.g. plotting, reporting..
+                self.performances.append(accuracy)
+                print("Accuracy on validation: {0:.2f}%"
+                      .format(accuracy * 100))
+                print("-----------------------------")
+
+
+
+
 
     def _train_one_epoch(self):
         """
@@ -145,6 +183,32 @@ class MultilayerPerceptron(Classifier):
         """
 
         pass
+
+
+
+        """
+        Train one epoch, seeing all input instances
+        """
+
+        for img, label in zip(self.training_set.input,
+                              self.training_set.label):
+
+            # Use LogisticLayer to do the job
+            # Feed it with inputs
+
+            # Do a forward pass to calculate the output and the error
+            self.layer.forward(img)
+
+            # Compute the derivatives w.r.t to the error
+            # Please note the treatment of nextDerivatives and nextWeights
+            # in case of an output layer
+            self.layer.computeErrorTerms(np.array(label - self.layer.outp),
+                                         np.array(1.0))
+
+            # Update weights in the online learning fashion
+            self.layer.updateWeights(self.learning_rate)
+
+
 
     def classify(self, test_instance):
         # Classify an instance given the model of the classifier
