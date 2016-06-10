@@ -88,14 +88,14 @@ class LogisticLayer():
 
         return outp
 
-    def computeErrorTerms(self, next_derivatives, next_weights):
+    def computeErrorTerms(self, next_error_terms, next_weights):
         """
         Compute the derivatives (backward)
 
         Parameters
         ----------
-        next_derivatives: ndarray
-            a numpy array containing the derivatives from next layer
+        next_error_terms: ndarray
+            a numpy array containing the error terms from next layer
         next_weights : ndarray
             a numpy array containing the weights from next layer
 
@@ -108,29 +108,29 @@ class LogisticLayer():
         # Here the implementation of partial derivative calculation
 
         # In case of the output layer, next_weights is array of 1
-        # and next_derivatives - the derivative of the error will be the errors
+        # and next_error_terms - the derivative of the error, will be the errors
         # Please see the call of this method in LogisticRegression.
         #self.errorTerms = (self.outp *
         #               (1 - self.outp) *
-        #               np.dot(next_derivatives, next_weights))
+        #               np.dot(next_error_terms, next_weights))
         
         # Or more general: output*(1-output) is the derivatives of sigmoid
         # (sigmoid_prime)
         # self.errorTerms = (Activation.sigmoid_prime(self.outp) *
-        #                np.dot(next_derivatives, next_weights))
+        #                np.dot(next_error_terms, next_weights))
 
         # Or even more general: doesn't care which activation function is used
         self.errorTerms = (self.activation_derivative(self.outp) *
-                        np.dot(next_derivatives, next_weights))
+                        np.dot(next_error_terms, next_weights))
 
         # Or you can explicitly calculate the derivatives for two cases
         # Page 40 Back-propagation slides
         # if self.is_classifier_layer:
-        #     self.errorTerms = (next_derivatives - self.outp) * self.outp * \
+        #     self.errorTerms = (next_error_terms - self.outp) * self.outp * \
         #                   (1 - self.outp)
         # else:
         #     self.errorTerms = self.outp * (1 - self.outp) * \
-        #                   np.dot(next_derivatives, next_weights)
+        #                   np.dot(next_error_terms, next_weights)
         # Or you can have two computeErrorTerms methods, feel free to call
         # the other is computeOutputLayerDerivative or such.
 
@@ -150,7 +150,7 @@ class LogisticLayer():
         weightedInput = np.dot(np.array(inp), self.weights)
         if self.activation_string == "sigmoid":
             return Activation.sigmoid(weightedInput)
-        else if self.activation_string == "softmax": 
-            return Activation.sigmoid(weightedInput)
+        elif self.activation_string == "softmax": 
+            return Activation.softmax(weightedInput)
         else:
             raise AssertionError("Error: Activation method %f not implemented yet" % self.activation_string)

@@ -103,7 +103,7 @@ class LogisticRegression(Classifier):
             self.layer.forward(img)
 
             # Compute the derivatives w.r.t to the error
-            # Please note the treatment of nextDerivatives and nextWeights
+            # Please note the treatment of next_error_terms and next_weights
             # in case of an output layer
             self.layer.computeErrorTerms(np.array(label - self.layer.outp),
                                          np.array(1.0))

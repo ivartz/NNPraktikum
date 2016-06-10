@@ -74,7 +74,7 @@ class MultilayerPerceptron(Classifier):
 
         # Output layer
         output_activation = "softmax"
-        self.layers.append(LogisticLayer(100, train.output.shape[1], None, output_activation, True))
+        self.layers.append(LogisticLayer(100, 10, None, output_activation, True)) # 10 if not len(set(train.input)) working len(set(train.input)
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -98,7 +98,7 @@ class MultilayerPerceptron(Classifier):
         # And remember the activation values of each layer
         """
         # list to record activations, appending numpy array results to it
-        activationValuesInLayers = []
+        #activationValuesInLayers = []
         #for layer_index in range(self.layers):
         #    if layer_index != 0:
         #        inp = activationValuesInLayers[layer_index-1]
@@ -106,15 +106,33 @@ class MultilayerPerceptron(Classifier):
         #    activationValuesInLayers.append(activationValues)
         #return activationValuesInLayers[-1]
 
+        #for layer_index, layer in enumerate(self.layers):
+        #    if layer_index != 0:
+        #        inp = activationValuesInLayers[layer_index-1]
+        #    activationValues = layer.forward(inp)
+        #    activationValuesInLayers.append(activationValues)
+
+        # another method that stores a layers output within itself
         for layer_index, layer in enumerate(self.layers):
             if layer_index != 0:
-                inp = activationValuesInLayers[layer_index-1]
-            activationValues = layer.forward(inp)
-            activationValuesInLayers.append(activationValues)
+                inp = self._get_layer[layer_index-1].outp
+            
+        
+            outp = layer.forward(inp)
+            
+            
+            #outp.insert(outp, 0, 1, axis = 0)
+
+
+        # Dominik
+
+
+
+
 
     def _compute_error(self, target):
         """
-        Compute the total error of the network
+        Compute the total error of the network (error terms from the output layer)
 
         Returns
         -------
@@ -126,9 +144,12 @@ class MultilayerPerceptron(Classifier):
         #return self.outputLayerErrornext_weights
 
         # computing error terms for the latest layer
-        self._get_output_layer().computeErrorTerms( target - self._get_output_layer().outp, np.array(1.0) )
+        #self._get_output_layer().computeErrorTerms( target - self._get_output_layer().outp, np.array(1.0) )
 
-    def _update_weights(self):
+        self._get_output_layer().errorTerms = target - self._get_output_layer().outp
+
+
+    def _update_weights(self, learning_rate):
         """
         Update the weights of the layers by propagating back the error
         """
@@ -143,18 +164,6 @@ class MultilayerPerceptron(Classifier):
         verbose : boolean
             Print logging messages with validation accuracy if verbose is True.
         """
-
-
-
-
-        """Train the Logistic Regression.
-
-        Parameters
-        ----------
-        verbose : boolean
-            Print logging messages with validation accuracy if verbose is True.
-        """
-
         # Run the training "epochs" times, print out the logs
         for epoch in range(self.epochs):
             if verbose:
@@ -173,47 +182,39 @@ class MultilayerPerceptron(Classifier):
                       .format(accuracy * 100))
                 print("-----------------------------")
 
-
-
-
-
     def _train_one_epoch(self):
         """
         Train one epoch, seeing all input instances
         """
-
-        pass
-
-
-
-        """
-        Train one epoch, seeing all input instances
-        """
-
         for img, label in zip(self.training_set.input,
                               self.training_set.label):
 
-            # Use LogisticLayer to do the job
-            # Feed it with inputs
+            # do a feed-forward to calculate the output and the error of the entire network
+            self._feed_forward(img)
 
-            # Do a forward pass to calculate the output and the error
-            self.layer.forward(img)
+            # compute error terms of the output layer
+            labelList = [0]*10 # todo: 10 not hardcoded
+            labelList[label] = 1
+            self._compute_error(labelList)
 
-            # Compute the derivatives w.r.t to the error
-            # Please note the treatment of nextDerivatives and nextWeights
-            # in case of an output layer
-            self.layer.computeErrorTerms(np.array(label - self.layer.outp),
-                                         np.array(1.0))
-
+            # backwards iteratively compute the error terms in the other (hidden) layers w.r.t to the error terms in the next layer
+            for layer_index, layer in reversed(list(enumerate(self.layers))):
+                if (not layer.is_classifier_layer) and layer_index != 2:   # todo: 2 not hardcoded
+                    
+                    next_layer = self._get_layer(layer_index+1)
+                    next_layer_error_terms = next_layer.errorTerms
+                    next_layer_weights = next_layer.weights
+                    
+                    layer.computeErrorTerms(next_layer_error_terms, next_layer_weights)
+            
             # Update weights in the online learning fashion
-            self.layer.updateWeights(self.learning_rate)
-
-
+            self._updateWeights(self.learning_rate)
 
     def classify(self, test_instance):
         # Classify an instance given the model of the classifier
         # You need to implement something here
-        return True
+        outp = self._feed_forward(test_instance)
+        return np.argmax(outp)
 
     def evaluate(self, test=None):
         """Evaluate a whole dataset.
