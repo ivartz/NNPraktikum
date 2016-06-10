@@ -60,7 +60,7 @@ class MultilayerPerceptron(Classifier):
 
         # Input layer
         input_activation = "sigmoid"
-        self.layers.append(LogisticLayer(train.input.shape[1], 64, None, input_activation, False)) # train.input.shape[1]-1 because input data includes 
+        self.layers.append(LogisticLayer(train.input.shape[1], 64, None, input_activation, False))
 
         # Hidden layer
         #hidden_activation = "sigmoid"
@@ -68,7 +68,7 @@ class MultilayerPerceptron(Classifier):
 
         # Output layer
         output_activation = "softmax"
-        self.layers.append(LogisticLayer(64, 10, None, output_activation, True)) # 10 if not len(set(train.input)) working len(set(train.input)
+        self.layers.append(LogisticLayer(64, 10, None, output_activation, True))
 
         #print train.input.shape       
 
@@ -132,8 +132,8 @@ class MultilayerPerceptron(Classifier):
             #print "working on layer ", layer_index
 
             if layer_index != 0:
-                inp = self._get_layer(layer_index-1).outp
-                inp =  np.insert(inp, 0, 1, axis=0)
+                inputExludingBias = self._get_layer(layer_index-1).outp
+                inp =  np.insert(inputExludingBias, 0, 1, axis=0)
                 #print "set inp to the previous layers output"
             #print inp.shape
             #print layer.shape
@@ -243,7 +243,7 @@ class MultilayerPerceptron(Classifier):
 
             # backwards iteratively compute the error terms in the other (hidden) layers w.r.t to the error terms in the next layer
             for layer_index, layer in reversed(list(enumerate(self.layers))):
-                if (not layer.is_classifier_layer) and layer_index != 2:   # todo: 2 not hardcoded
+                if (not layer.is_classifier_layer):# and layer_index != 2:   # todo: 2 not hardcoded
                     
                     next_layer = self._get_layer(layer_index+1)
                     next_layer_error_terms = next_layer.errorTerms

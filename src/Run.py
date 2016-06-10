@@ -9,7 +9,7 @@ from model.logistic_regression import LogisticRegression
 from model.mlp import MultilayerPerceptron
 
 from report.evaluator import Evaluator
-#from report.performance_plot import PerformancePlot
+from report.performance_plot import PerformancePlot
 
 
 def main():
@@ -105,9 +105,9 @@ def main():
     evaluator.printAccuracy(data.test_set, mlpPred)
 
     # Draw
-    #plot = PerformancePlot("Logistic Regression")
-    #plot.draw_performance_epoch(myLRClassifier.performances,
-    #                            myLRClassifier.epochs)
+    plot = PerformancePlot("MLP validation")
+    plot.draw_performance_epoch(myMLPClassifier.performances,
+                                myMLPClassifier.epochs)
 
 if __name__ == '__main__':
     main()
