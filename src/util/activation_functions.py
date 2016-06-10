@@ -6,6 +6,7 @@ Activation functions which can be used within neurons.
 
 from numpy import exp
 from numpy import divide
+from numpy import max
 
 
 class Activation:
@@ -52,7 +53,7 @@ class Activation:
     @staticmethod
     def softmax(outp):
         # Here you have to code the softmax function
-        e_x = exp(x - np.max(outp))
+        e_x = exp(outp - max(outp))
         return e_x / e_x.sum()
 
     @staticmethod

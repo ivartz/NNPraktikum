@@ -7,6 +7,8 @@ from model.classifier import Classifier
 
 from sklearn.metrics import accuracy_score
 
+import sys
+
 class MultilayerPerceptron(Classifier):
     """
     A multilayer perceptron used for classification
@@ -52,6 +54,26 @@ class MultilayerPerceptron(Classifier):
         self.performances = []
 
         self.layers = layers
+
+        # Build up the network from specific layers
+        self.layers = []
+
+        # Input layer
+        input_activation = "sigmoid"
+        self.layers.append(LogisticLayer(train.input.shape[1], 64, None, input_activation, False)) # train.input.shape[1]-1 because input data includes 
+
+        # Hidden layer
+        #hidden_activation = "sigmoid"
+        #self.layers.append(LogisticLayer(200, 100, None, hidden_activation, False)) 
+
+        # Output layer
+        output_activation = "softmax"
+        self.layers.append(LogisticLayer(64, 10, None, output_activation, True)) # 10 if not len(set(train.input)) working len(set(train.input)
+
+        #print train.input.shape       
+
+        #sys.exit()
+
         self.input_weights = input_weights
 
         # add bias values ("1"s) at the beginning of all data sets
@@ -61,29 +83,22 @@ class MultilayerPerceptron(Classifier):
                                               axis=1)
         self.test_set.input = np.insert(self.test_set.input, 0, 1, axis=1)
 
-        # Build up the network from specific layers
-        self.layers = []
 
-        # Input layer
-        input_activation = "sigmoid"
-        self.layers.append(LogisticLayer(train.input.shape[1], 100, None, input_activation, False)) 
 
-        # Hidden layer
-        #hidden_activation = "sigmoid"
-        #self.layers.append(LogisticLayer(200, 100, None, hidden_activation, False)) 
 
-        # Output layer
-        output_activation = "softmax"
-        self.layers.append(LogisticLayer(100, 10, None, output_activation, True)) # 10 if not len(set(train.input)) working len(set(train.input)
+        #print self.layers[0].shape
+        #print self.layers[1].shape
+
+        
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
 
     def _get_input_layer(self):
-        return self.get_layer(0)
+        return self._get_layer(0)
 
     def _get_output_layer(self):
-        return self.get_layer(-1)
+        return self._get_layer(-1)
 
     def _feed_forward(self, inp):
         """
@@ -114,13 +129,17 @@ class MultilayerPerceptron(Classifier):
 
         # another method that stores a layers output within itself
         for layer_index, layer in enumerate(self.layers):
+            #print "working on layer ", layer_index
+
             if layer_index != 0:
-                inp = self._get_layer[layer_index-1].outp
+                inp = self._get_layer(layer_index-1).outp
+                inp =  np.insert(inp, 0, 1, axis=0)
+                #print "set inp to the previous layers output"
+            #print inp.shape
+            #print layer.shape
+            layer.forward(inp)
             
-        
-            outp = layer.forward(inp)
-            
-            
+            #outp = layer.forward(inp)
             #outp.insert(outp, 0, 1, axis = 0)
 
 
@@ -190,12 +209,37 @@ class MultilayerPerceptron(Classifier):
                               self.training_set.label):
 
             # do a feed-forward to calculate the output and the error of the entire network
+            #print "___HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE___"
+
+
+
+            #newInput = inp
+            # for all layers
+            #for l in self.layers:
+            #    newInput = l.forward(newInput)
+            #    # add bias values ("1"s) at the beginning of all data sets
+            #    newInput = np.insert(newInput, 0, 1, axis=0)
+            #    
+            #return newInput
+
+
+            #print img.shape
+
+            #sys.exit()
             self._feed_forward(img)
+
+            #print "___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2"
+
 
             # compute error terms of the output layer
             labelList = [0]*10 # todo: 10 not hardcoded
             labelList[label] = 1
+            
+            #print labelList
+            #print label
+
             self._compute_error(labelList)
+
 
             # backwards iteratively compute the error terms in the other (hidden) layers w.r.t to the error terms in the next layer
             for layer_index, layer in reversed(list(enumerate(self.layers))):
@@ -205,15 +249,26 @@ class MultilayerPerceptron(Classifier):
                     next_layer_error_terms = next_layer.errorTerms
                     next_layer_weights = next_layer.weights
                     
-                    layer.computeErrorTerms(next_layer_error_terms, next_layer_weights)
+                    #print "___HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE___"
+
+                    #print next_layer_weights.shape
+                    #print next_layer_weights[1::].shape
+                    
+                    #sys.exit()
+                    layer.computeErrorTerms(next_layer_error_terms, np.transpose(next_layer_weights[1::]))
             
             # Update weights in the online learning fashion
-            self._updateWeights(self.learning_rate)
+            self._update_weights(self.learning_rate)
 
     def classify(self, test_instance):
         # Classify an instance given the model of the classifier
         # You need to implement something here
-        outp = self._feed_forward(test_instance)
+        self._feed_forward(test_instance)
+        
+        outp = self._get_output_layer().outp
+        
+        #print outp
+
         return np.argmax(outp)
 
     def evaluate(self, test=None):
