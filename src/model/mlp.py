@@ -16,7 +16,10 @@ class MultilayerPerceptron(Classifier):
 
     def __init__(self, train, valid, test, layers=None, input_weights=None,
                  output_task='classification', output_activation='softmax',
-                 cost='crossentropy', learning_rate=0.01, epochs=50):
+
+                 cost='crossentropy', learning_rate=0.01, epochs=50,
+                 hidden_neurons=64):
+
 
         """
         A digit-7 recognizer based on logistic regression algorithm
@@ -41,6 +44,9 @@ class MultilayerPerceptron(Classifier):
 
         self.learning_rate = learning_rate
         self.epochs = epochs
+
+        self.hidden_neurons = hidden_neurons
+
         self.output_task = output_task  # Either classification or regression
         self.output_activation = output_activation
         self.cost = cost
@@ -60,17 +66,19 @@ class MultilayerPerceptron(Classifier):
 
         # Input layer
         input_activation = "sigmoid"
-        self.layers.append(LogisticLayer(train.input.shape[1], 64, None, input_activation, False))
+
+        self.layers.append(LogisticLayer(train.input.shape[1], self.hidden_neurons, None, input_activation, False))
 
         # Hidden layer
         #hidden_activation = "sigmoid"
-        #self.layers.append(LogisticLayer(200, 100, None, hidden_activation, False)) 
+        #self.layers.append(LogisticLayer(200, 100, None, hidden_activation, False))
 
         # Output layer
         output_activation = "softmax"
-        self.layers.append(LogisticLayer(64, 10, None, output_activation, True))
+        self.layers.append(LogisticLayer(self.hidden_neurons, 10, None, output_activation, True))
 
-        #print train.input.shape       
+        #print train.input.shape
+
 
         #sys.exit()
 
@@ -89,7 +97,8 @@ class MultilayerPerceptron(Classifier):
         #print self.layers[0].shape
         #print self.layers[1].shape
 
-        
+
+
 
     def _get_layer(self, layer_index):
         return self.layers[layer_index]
@@ -138,7 +147,7 @@ class MultilayerPerceptron(Classifier):
             #print inp.shape
             #print layer.shape
             layer.forward(inp)
-            
+
             #outp = layer.forward(inp)
             #outp.insert(outp, 0, 1, axis = 0)
 
@@ -219,7 +228,7 @@ class MultilayerPerceptron(Classifier):
             #    newInput = l.forward(newInput)
             #    # add bias values ("1"s) at the beginning of all data sets
             #    newInput = np.insert(newInput, 0, 1, axis=0)
-            #    
+
             #return newInput
 
 
@@ -234,7 +243,7 @@ class MultilayerPerceptron(Classifier):
             # compute error terms of the output layer
             labelList = [0]*10 # todo: 10 not hardcoded
             labelList[label] = 1
-            
+
             #print labelList
             #print label
 
@@ -244,19 +253,23 @@ class MultilayerPerceptron(Classifier):
             # backwards iteratively compute the error terms in the other (hidden) layers w.r.t to the error terms in the next layer
             for layer_index, layer in reversed(list(enumerate(self.layers))):
                 if (not layer.is_classifier_layer):# and layer_index != 2:   # todo: 2 not hardcoded
-                    
+
+
                     next_layer = self._get_layer(layer_index+1)
                     next_layer_error_terms = next_layer.errorTerms
                     next_layer_weights = next_layer.weights
-                    
+
+
                     #print "___HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE___"
 
                     #print next_layer_weights.shape
                     #print next_layer_weights[1::].shape
-                    
+
+
                     #sys.exit()
                     layer.computeErrorTerms(next_layer_error_terms, np.transpose(next_layer_weights[1::]))
-            
+
+
             # Update weights in the online learning fashion
             self._update_weights(self.learning_rate)
 
@@ -264,9 +277,11 @@ class MultilayerPerceptron(Classifier):
         # Classify an instance given the model of the classifier
         # You need to implement something here
         self._feed_forward(test_instance)
-        
+
+
         outp = self._get_output_layer().outp
-        
+
+
         #print outp
 
         return np.argmax(outp)

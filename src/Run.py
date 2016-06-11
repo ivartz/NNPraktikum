@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+
 from data.mnist_seven import MNISTSeven
 
 #from model.stupid_recognizer import StupidRecognizer
@@ -71,11 +73,23 @@ def main():
     #lrPred = myLRClassifier.evaluate()
 
     # Logistic Regression
+
+    neuronsInHiddenLayer = 64
+    epochs =  100
+    learningRate =  0.01
+
+    if (len(sys.argv) == 4):
+        neuronsInHiddenLayer = int(sys.argv[1])
+        epochs =  int(sys.argv[2])
+        learningRate =  float(sys.argv[3])
+
     myMLPClassifier = MultilayerPerceptron(data.training_set,
                                            data.validation_set,
                                            data.test_set,
-                                           learning_rate=0.005,
-                                           epochs=100)
+                                           learning_rate=learningRate,
+                                           epochs=epochs,
+                                           hidden_neurons=neuronsInHiddenLayer)
+
 
     print("\nLogistic Regression has been training..")
     myMLPClassifier.train()
@@ -105,9 +119,17 @@ def main():
     evaluator.printAccuracy(data.test_set, mlpPred)
 
     # Draw
-    plot = PerformancePlot("MLP validation")
-    plot.draw_performance_epoch(myMLPClassifier.performances,
-                                myMLPClassifier.epochs)
+
+    plot = PerformancePlot("MLP validation",
+                            myMLPClassifier.performances,
+                            myMLPClassifier.epochs,
+                            myMLPClassifier.learning_rate,
+                            myMLPClassifier.hidden_neurons,
+                            evaluator.getAccuracy(data.test_set, mlpPred))
+
+    plot.save_performance_as_img(folder="./plots")
+    plot.draw_performance_epoch()
+
 
 if __name__ == '__main__':
     main()
