@@ -5,28 +5,16 @@ import sys
 
 from data.mnist_seven import MNISTSeven
 
-#from model.stupid_recognizer import StupidRecognizer
-#from model.perceptron import Perceptron
 from model.logistic_regression import LogisticRegression
 from model.mlp import MultilayerPerceptron
 
 from report.evaluator import Evaluator
 from report.performance_plot import PerformancePlot
 
-
 def main():
-    #data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000,
-    #                  one_hot=True, target_digit='7')
-
-    # NOTE:
-    # Comment out the MNISTSeven instantiation above and
-    # uncomment the following to work with full MNIST task
+    # load data
     data = MNISTSeven("../data/mnist_seven.csv", 3000, 1000, 1000,
                        one_hot=False)
-
-    # NOTE:
-    # Other 1-digit classifiers do not make sense now for comparison purpose
-    # So you should comment them out, let alone the MLP training and evaluation
 
     # Train the classifiers #
     print("=========================")
@@ -72,8 +60,7 @@ def main():
     # Explicitly specify the test set to be evaluated
     #lrPred = myLRClassifier.evaluate()
 
-    # Logistic Regression
-
+    # two layer mlp parameters
     neuronsInHiddenLayer = 64
     epochs =  100
     learningRate =  0.01
@@ -119,7 +106,6 @@ def main():
     evaluator.printAccuracy(data.test_set, mlpPred)
 
     # Draw
-
     plot = PerformancePlot("MLP validation",
                             myMLPClassifier.performances,
                             myMLPClassifier.epochs,
@@ -129,7 +115,6 @@ def main():
 
     plot.save_performance_as_img(folder="./plots")
     plot.draw_performance_epoch()
-
 
 if __name__ == '__main__':
     main()

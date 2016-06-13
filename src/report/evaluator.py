@@ -4,12 +4,10 @@ from __future__ import division
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import accuracy_score
 
-
 class Evaluator:
     """
     Print performance of a classification model over a dataset
     """
-
     def printTestLabel(self, testSet):
         # print all test labels
         for label in testSet.label:
@@ -35,7 +33,6 @@ class Evaluator:
     def printAccuracy(self, testSet, pred):
         print("Accuracy of the recognizer: %.2f%%" %
               (accuracy_score(testSet.label, pred)*100))
-
 
     def getAccuracy(self, testSet, pred):
         return round((accuracy_score(testSet.label, pred)*100), 2)

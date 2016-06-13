@@ -13,14 +13,10 @@ class MultilayerPerceptron(Classifier):
     """
     A multilayer perceptron used for classification
     """
-
     def __init__(self, train, valid, test, layers=None, input_weights=None,
                  output_task='classification', output_activation='softmax',
-
                  cost='crossentropy', learning_rate=0.01, epochs=50,
                  hidden_neurons=64):
-
-
         """
         A digit-7 recognizer based on logistic regression algorithm
 
@@ -77,10 +73,6 @@ class MultilayerPerceptron(Classifier):
         output_activation = "softmax"
         self.layers.append(LogisticLayer(self.hidden_neurons, 10, None, output_activation, True))
 
-        #print train.input.shape
-
-
-        #sys.exit()
 
         self.input_weights = input_weights
 
@@ -90,14 +82,6 @@ class MultilayerPerceptron(Classifier):
         self.validation_set.input = np.insert(self.validation_set.input, 0, 1,
                                               axis=1)
         self.test_set.input = np.insert(self.test_set.input, 0, 1, axis=1)
-
-
-
-
-        #print self.layers[0].shape
-        #print self.layers[1].shape
-
-
 
 
     def _get_layer(self, layer_index):
@@ -121,61 +105,25 @@ class MultilayerPerceptron(Classifier):
         # Here you have to propagate forward through the layers
         # And remember the activation values of each layer
         """
-        # list to record activations, appending numpy array results to it
-        #activationValuesInLayers = []
-        #for layer_index in range(self.layers):
-        #    if layer_index != 0:
-        #        inp = activationValuesInLayers[layer_index-1]
-        #    activationValues = self._get_layer(layer_index).forward(inp)
-        #    activationValuesInLayers.append(activationValues)
-        #return activationValuesInLayers[-1]
-
-        #for layer_index, layer in enumerate(self.layers):
-        #    if layer_index != 0:
-        #        inp = activationValuesInLayers[layer_index-1]
-        #    activationValues = layer.forward(inp)
-        #    activationValuesInLayers.append(activationValues)
-
-        # another method that stores a layers output within itself
         for layer_index, layer in enumerate(self.layers):
             #print "working on layer ", layer_index
-
             if layer_index != 0:
                 inputExludingBias = self._get_layer(layer_index-1).outp
                 inp =  np.insert(inputExludingBias, 0, 1, axis=0)
                 #print "set inp to the previous layers output"
-            #print inp.shape
-            #print layer.shape
             layer.forward(inp)
-
-            #outp = layer.forward(inp)
-            #outp.insert(outp, 0, 1, axis = 0)
-
-
-        # Dominik
-
-
-
-
 
     def _compute_error(self, target):
         """
         Compute the total error of the network (error terms from the output layer)
 
-        Returns
+        Sets
         -------
         ndarray :
             a numpy array (1,nOut) containing the output of the layer
         """
-
-        #self.outputLayerError = BinaryCrossEntropyError.calculate_error(target - self._get_output_layer().outp)
-        #return self.outputLayerErrornext_weights
-
         # computing error terms for the latest layer
-        #self._get_output_layer().computeErrorTerms( target - self._get_output_layer().outp, np.array(1.0) )
-
         self._get_output_layer().errorTerms = target - self._get_output_layer().outp
-
 
     def _update_weights(self, learning_rate):
         """
@@ -216,39 +164,15 @@ class MultilayerPerceptron(Classifier):
         """
         for img, label in zip(self.training_set.input,
                               self.training_set.label):
-
             # do a feed-forward to calculate the output and the error of the entire network
-            #print "___HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE___"
 
-
-
-            #newInput = inp
-            # for all layers
-            #for l in self.layers:
-            #    newInput = l.forward(newInput)
-            #    # add bias values ("1"s) at the beginning of all data sets
-            #    newInput = np.insert(newInput, 0, 1, axis=0)
-
-            #return newInput
-
-
-            #print img.shape
-
-            #sys.exit()
             self._feed_forward(img)
-
-            #print "___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2___HERE2"
-
 
             # compute error terms of the output layer
             labelList = [0]*10 # todo: 10 not hardcoded
             labelList[label] = 1
 
-            #print labelList
-            #print label
-
             self._compute_error(labelList)
-
 
             # backwards iteratively compute the error terms in the other (hidden) layers w.r.t to the error terms in the next layer
             for layer_index, layer in reversed(list(enumerate(self.layers))):
@@ -259,16 +183,7 @@ class MultilayerPerceptron(Classifier):
                     next_layer_error_terms = next_layer.errorTerms
                     next_layer_weights = next_layer.weights
 
-
-                    #print "___HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE______HERE___"
-
-                    #print next_layer_weights.shape
-                    #print next_layer_weights[1::].shape
-
-
-                    #sys.exit()
                     layer.computeErrorTerms(next_layer_error_terms, np.transpose(next_layer_weights[1::]))
-
 
             # Update weights in the online learning fashion
             self._update_weights(self.learning_rate)
@@ -278,11 +193,7 @@ class MultilayerPerceptron(Classifier):
         # You need to implement something here
         self._feed_forward(test_instance)
 
-
         outp = self._get_output_layer().outp
-
-
-        #print outp
 
         return np.argmax(outp)
 

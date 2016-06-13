@@ -1,13 +1,10 @@
 import matplotlib.pyplot as plt
 
-
 class PerformancePlot(object):
     '''
     Class to plot the performances
     Very simple and badly-styled
     '''
-
-
     def __init__(self, name, performances, epochs, learning_rate,
                  hidden_neurons, testAccuracy):
 
@@ -29,7 +26,6 @@ class PerformancePlot(object):
         plt.ylim(ymax=1)
         plt.ylabel("Accuracy")
         plt.xlabel("Epoch")
-
 
     def draw_performance_epoch(self):
         plt.show()
