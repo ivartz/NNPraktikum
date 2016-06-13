@@ -62,7 +62,7 @@ def main():
 
     # two layer mlp parameters
     neuronsInHiddenLayer = 64
-    epochs =  100
+    epochs =  20
     learningRate =  0.01
 
     if (len(sys.argv) == 4):
